@@ -18,10 +18,6 @@ class RoomInventory {
     public Map<String, Integer> getRoomAvailability() {
         return roomAvailability;
     }
-
-    public void updateAvailability(String roomType, int count) {
-        roomAvailability.put(roomType, count);
-    }
 }
 
 class Room {
@@ -54,27 +50,42 @@ class Room {
     }
 }
 
-public class BookMyStayApp {
-    public static void main(String[] args) {
-        RoomInventory inventory = new RoomInventory();
+class RoomService {
+    private RoomInventory inventory;
 
+    public RoomService(RoomInventory inventory) {
+        this.inventory = inventory;
+    }
+
+    public void showAvailability() {
         Room single = new Room("Single", 1, 250, 1500.0);
         Room doubleRoom = new Room("Double", 2, 400, 2500.0);
         Room suite = new Room("Suite", 3, 750, 5000.0);
 
-        printRoom(single, inventory);
-        printRoom(doubleRoom, inventory);
-        printRoom(suite, inventory);
+        display(single);
+        display(doubleRoom);
+        display(suite);
     }
 
-    private static void printRoom(Room room, RoomInventory inventory) {
-        int available = inventory.getRoomAvailability().get(room.getType());
+    private void display(Room room) {
+        Map<String, Integer> availabilityMap = inventory.getRoomAvailability();
+        int available = availabilityMap.get(room.getType());
 
-        System.out.println(room.getType() + " Room:");
-        System.out.println("Beds: " + room.getBeds());
-        System.out.println("Size: " + room.getSize() + " sqft");
-        System.out.println("Price per night: " + room.getPrice());
-        System.out.println("Available Rooms: " + available);
-        System.out.println();
+        if (available > 0) {
+            System.out.println(room.getType() + " Room:");
+            System.out.println("Beds: " + room.getBeds());
+            System.out.println("Size: " + room.getSize() + " sqft");
+            System.out.println("Price per night: " + room.getPrice());
+            System.out.println("Available: " + available);
+            System.out.println();
+        }
+    }
+}
+
+public class BookMyStayApp {
+    public static void main(String[] args) {
+        RoomInventory inventory = new RoomInventory();
+        RoomService service = new RoomService(inventory);
+        service.showAvailability();
     }
 }
